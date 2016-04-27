@@ -16,14 +16,30 @@ class Todo < ActiveRecord::Base
 
   after_create { |r| Event.add_todo(r)  }
 
-  before_save do |r|
-    return if r.new_record?
+  before_save :set_events
 
-    if r.finished_at_changed? && r.finished_at_was.blank?
-      message = "完成了任务"
-    elsif  
-    end 
+  
+  def set_events
+    return if self.new_record?
 
+    message = 
+    if finished_at_changed? && finished_at_was.blank?
+      "完成了任务"
+    elsif deleted_at_changed? && deleted_at_was.blank?
+      "删除了任务"
+    elsif assignee_id_changed?
+      if assignee_id.blank?
+        "取消了#{User.find(assignee_id_was).name}的任务"
+      elsif assignee_id_was.blank?
+        "给 #{self.assignee.name} 指派了任务"
+      else
+        "把 #{User.find(assignee_id_was).name} 的任务指派给了 #{self.assignee.name}"
+      end
+    elsif due_date_changed?
+      " 将任务完成时间从 #{due_date_was || '没有截止日期'} 修改为 #{due_date || '没有截止日期'}"      
+    end
+
+    Event.add_todo_change(self, message) if message.present?
   end
 
 end

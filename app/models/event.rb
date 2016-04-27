@@ -13,7 +13,7 @@ class Event < ActiveRecord::Base
         user_id: project.creator_id,
         source: project, 
         behaviour: "create_project",
-        message: "#{project.creator.name} 创建了项目: #{project.name}"
+        message: "创建了项目: #{project.name}"
       )
     end
 
@@ -24,7 +24,7 @@ class Event < ActiveRecord::Base
         user_id: list.creator_id,
         source: list, 
         behaviour: "create_list",
-        message: "#{list.creator.name} 创建了任务清单: #{list.name}"
+        message: "创建了任务清单: #{list.name}"
       )
     end
 
@@ -37,8 +37,19 @@ class Event < ActiveRecord::Base
         behaviour: "create_todo"
       )
       assign = (todo.assignee_id)? "为#{todo.assignee.name}" : ""
-      event.message = "#{todo.creator.name} #{assign} 创建了任务: #{todo.name}"
+      event.message = "#{assign} 创建了任务: #{todo.name}"
       event.save
+    end
+
+    def add_todo_change(todo, message)
+      Event.create(
+        team_id: todo.project.team_id, 
+        project_id: todo.project.id, 
+        user_id: todo.updater_id,
+        source: todo,
+        behaviour: "update_todo"
+        message: message
+      )
     end
 
     def add_comment(comment)
@@ -50,7 +61,7 @@ class Event < ActiveRecord::Base
         behaviour: "create_comment"
       )
       target = (comment.source_type == "Todo")? "任务" : "任务清单"
-      event.message = "#{comment.creator.name}  回复了#{target}: #{comment.source.name}"
+      event.message = "回复了#{target}: #{comment.source.name}"
       event.save
     end
 

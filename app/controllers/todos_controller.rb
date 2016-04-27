@@ -30,7 +30,7 @@ class TodosController < ApplicationController
 
   def update
     @todo = Todo.find(params[:id])
-    @todo.assign_attributes(params.require(:todo).permit(:name, :assignee_id, :due_date))
+    @todo.assign_attributes(params.require(:todo).permit(:name, :assignee_id, :due_date).merge(updater_id: current_user.id))
 
     if @todo.save
       redirect_to project_todos_path(@project)
