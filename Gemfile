@@ -46,3 +46,6 @@ group :development do
   gem 'spring'
 end
 
+# 消息推送
+gem 'async_sinatra'
+gem 'thin'

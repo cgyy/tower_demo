@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   end
 
   def forbidden
-  	render :status => :forbidden, :text => "forbidden"
+  	render :status => :forbidden, :text => "您没有权限访问此页面"
   end
   
 end

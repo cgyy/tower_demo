@@ -3,6 +3,8 @@ class CreateProjects < ActiveRecord::Migration
     create_table :projects do |t|
       t.string :name
       t.text :description
+      t.integer :team_id
+      t.integer :creator_id
 
       t.timestamps null: false
     end

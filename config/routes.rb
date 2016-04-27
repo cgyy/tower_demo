@@ -56,18 +56,19 @@ Rails.application.routes.draw do
 
   resources :teams do
     resources :events
+    resources :projects
   end
 
   resources :projects do
     resources :todos do
       member do
         put "finish"
+        get "comment"
+        post "comment"
       end
     end
     resources :lists
   end
 
-
-  root "projects#index"
 
 end

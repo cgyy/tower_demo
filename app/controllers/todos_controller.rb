@@ -43,16 +43,27 @@ class TodosController < ApplicationController
 
   def destroy
     @todo = Todo.find(params[:id])
-    forbidden if false
+    return forbidden if false # 只有管理员或创建者才能删除任务
 
     @todo.update_attributes(deleted_at: Time.now, updater_id: current_user.id )
     redirect_to project_todos_path(@project)
   end
 
+  # 完成任务
   def finish
     @todo = Todo.find(params[:id])
     @todo.update_attributes(finisher_id: current_user.id, finished_at: Time.now)
     redirect_to project_todos_path(@project)
+  end
+
+  # 添加评论
+  def comment
+    @todo = Todo.find(params[:id])
+    @comment = Comment.new
+    if request.method == "POST"
+      @comment.update_attributes(params.require(:comment).permit(:content).merge(source: @todo, creator_id: current_user.id))
+      redirect_to project_todos_path(@project)
+    end
   end
 
   private

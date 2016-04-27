@@ -1,0 +1,7 @@
+<p style="color:red"><%= flash[:alert] %></p>
+
+<%= form_for @comment, url: comment_project_todo_path(@project, @todo) do |f| %>
+  评论内容 <%= f.text_area :content %><br />
+  
+  <%= f.submit "提交" %>
+<% end %>
