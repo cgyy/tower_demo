@@ -1,0 +1,52 @@
+<%= link_to "添加任务", new_project_todo_path(@project) %>
+<%= link_to "添加清单", new_project_list_path(@project) %>
+
+<h2>任务</h2>
+
+<% @todos.each do |todo| %>
+  <div>
+    <%= "#{todo.name} 指派给: #{todo.assignee.try(:name)}  #{todo.due_date}"  %>
+    <%= link_to "编辑", edit_project_todo_path(@project, todo) %>
+    <% if true %>
+      <%= link_to "删除", { controller: :todos, action: :destroy , id: todo.id }, method: :delete, data: { confirm: "确定删除吗?" } %>
+    <% end %>
+    <%= link_to "完成", { controller: :todos, action: :finish , id: todo.id }, method: :put %>
+  </div>
+
+<% end %>
+
+<h2>我的清单</h2>
+
+<% @lists.each do |list| %>
+  <div><%= link_to list.name, project_list_path(@project, list) %>
+    <% list.todos.unfinished.active.each do |todo| %>
+      <div>
+        <%= "#{todo.name} 指派给: #{todo.assignee.try(:name)}  #{todo.due_date}"  %>
+        <%= link_to "编辑", edit_project_todo_path(@project, todo) %>
+        <% if true %>
+          <%= link_to "删除", { controller: :todos, action: :destroy , id: todo.id }, method: :delete, data: { confirm: "确定删除吗?" } %>
+        <% end %>
+        <%= link_to "完成", { controller: :todos, action: :finish , id: todo.id }, method: :put %>
+      </div>
+
+    <% end %>
+
+    <br/>
+    <%= link_to "添加新任务", new_project_todo_path(@project, list_id: list.id) %>
+
+  </div>
+
+  <hr />
+<% end %>
+
+
+<h2>已完成任务</h2>
+<% @finished_todos.each do |todo| %>
+  <div>
+    <%= "#{todo.name} 指派给: #{todo.assignee.try(:name)}  #{todo.due_date}"  %>
+    <% if true %>
+      <%= link_to "删除", { controller: :todos, action: :destroy , id: todo.id }, method: :delete, data: { confirm: "确定删除吗?" } %>
+    <% end %>
+  </div>
+
+<% end %>

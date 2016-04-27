@@ -1,0 +1,8 @@
+<p style="color:red"><%= flash[:alert] %></p>
+
+<%= form_for @list, url: project_lists_path(@project) do |f| %>
+  名称: <%= f.text_field :name %><br />
+  描述(可选): <%= f.text_area :description %><br />
+
+  <%= f.submit "创建清单" %>
+<% end %>
