@@ -25,6 +25,14 @@ class Event < ActiveRecord::Base
     "<a href='#{path}'>#{name}</a>"
   end
 
+  def full_message
+    content = "#{message}: #{source_url}"
+    content += "<br /><p>#{source.content}</p>" if source_type == "Comment"
+    return content.html_safe
+    content = (source_type == "Comment") ? "#{message} <br /><p>#{source.content}</p>" : message
+    (content + source_url).html_safe
+  end
+
 
   class << self
     # 将events按项目分组

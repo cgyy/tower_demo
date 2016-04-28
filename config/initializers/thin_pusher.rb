@@ -6,7 +6,7 @@ class ThinPusher < Sinatra::Base
   include ApplicationHelper
   register Sinatra::Async
 
-  TIMEOUT = 60 * 5
+  TIMEOUT = 30
 
 
   aget '/poll' do
@@ -23,8 +23,7 @@ class ThinPusher < Sinatra::Base
           user_avatar: event.user.avatar_url,
           date: event.created_at.to_date,
           time: event.created_at.strftime("%H:%M"),
-          message: event.message,
-          url: event.source_url
+          message: event.full_message
         } 
       }.to_json)
     end

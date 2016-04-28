@@ -7,7 +7,7 @@
     <li>
       <%= "#{todo.name} 指派给: #{todo.assignee.try(:name)}  #{todo.due_date}"  %>
       <%= link_to "编辑", edit_project_todo_path(@project, todo) %>
-      <% if true %>
+      <% if @deletable %>
         <%= link_to "删除", { controller: :todos, action: :destroy , id: todo.id }, method: :delete, data: { confirm: "确定删除吗?" } %>
       <% end %>
       <%= link_to "完成", { controller: :todos, action: :finish , id: todo.id }, method: :put %>
@@ -28,7 +28,7 @@
         <li>
           <%= "#{todo.name} 指派给: #{todo.assignee.try(:name)}  #{todo.due_date}"  %>
           <%= link_to "编辑", edit_project_todo_path(@project, todo) %>
-          <% if true %>
+          <% if @deletable %>
             <%= link_to "删除", { controller: :todos, action: :destroy , id: todo.id }, method: :delete, data: { confirm: "确定删除吗?" } %>
           <% end %>
           <%= link_to "完成", { controller: :todos, action: :finish , id: todo.id }, method: :put %>
@@ -52,7 +52,7 @@
   <% @finished_todos.each do |todo| %>
     <li>
       <%= "#{todo.name} 指派给: #{todo.assignee.try(:name)}  #{todo.due_date}"  %>
-      <% if true %>
+      <% if @deletable %>
         <%= link_to "删除", { controller: :todos, action: :destroy , id: todo.id }, method: :delete, data: { confirm: "确定删除吗?" } %>
         <%= link_to "评论", comment_project_todo_path(@project, todo) %>
       <% end %>

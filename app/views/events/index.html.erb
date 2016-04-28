@@ -17,12 +17,11 @@
           <div class="event-project proj-<%= project.id %>">
             <h4><%= project.name %></h4>
             <% events.each do |event| %>
-              <div>
+              <div class="event-action">
                 <%= event.created_at.strftime("%H:%M") %>
                 <%= image_tag(event.user.avatar_url, size: "20x20") %>
                 <%= event.user.name %>
-                <%= event.message %>:
-                <%= event.source_url.html_safe %>
+                <%= event.full_message %>
               </div>
             <% end %>        
         <% end %>
@@ -53,18 +52,16 @@
       },
 
       showMessage: function(event) {
-        console.log(event)
         var html = ""
         var dateParent
         var projParent
         var parent
 
-        var inHtml = "<div>"
+        var inHtml = '<div class="event-action"> '
         inHtml += event.time + " "
         inHtml += '<img src="' + event.user_avatar + '" width="20" height="20" /> '
         inHtml += event.user_name + " "
         inHtml += event.message + " "
-        inHtml += event.url
         inHtml += '</div>'
         
         dateParent = $(".event-date.date-" + event.date).first()
@@ -73,7 +70,7 @@
         }
 
         if (projParent !=null && projParent.length > 0){
-          parent = projParent
+          parent = projParent.find(".event-action").first()
           html = inHtml
         }else if (dateParent.length > 0) {
           parent = dateParent
@@ -91,13 +88,13 @@
           html += '</div></div>'
         }
 
-        console.log(11)
-        console.log(dateParent)
-        console.log(22)
-        console.log(projParent)
+        // console.log(11)
+        // console.log(dateParent)
+        // console.log(22)
+        // console.log(projParent)
 
-        console.log(parent)
-        console.log(html)
+        // console.log(parent)
+        // console.log(html)
 
         parent.prepend(html)
       }

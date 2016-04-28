@@ -1,11 +1,12 @@
 class TodosController < ApplicationController
 
-  before_action :set_project
+  before_action :set_project, :authorize_project
 
   def index
-    @todos = @project.todos.unclassified.unfinished.active
-    @lists = @project.lists
-    @finished_todos = @project.todos.finished.active
+    @todos = @project.todos.includes(:assignee).unclassified.unfinished.active
+    @lists = @project.lists.includes(:todos)
+    @finished_todos = @project.todos.includes(:assignee).finished.active
+    @deletable = current_user.can?(:manage, @project)
   end
 
   def new
@@ -43,7 +44,7 @@ class TodosController < ApplicationController
 
   def destroy
     @todo = Todo.find(params[:id])
-    return forbidden if false # 只有管理员或创建者才能删除任务
+    return forbidden unless  current_user.can?(:manage, @project) # 只有管理员或创建者才能删除任务
 
     @todo.update_attributes(deleted_at: Time.now, updater_id: current_user.id )
     redirect_to project_todos_path(@project)
@@ -52,7 +53,7 @@ class TodosController < ApplicationController
   # 完成任务
   def finish
     @todo = Todo.find(params[:id])
-    @todo.update_attributes(finisher_id: current_user.id, finished_at: Time.now)
+    @todo.update_attributes(finisher_id: current_user.id, finished_at: Time.now, updater_id: current_user.id)
     redirect_to project_todos_path(@project)
   end
 
@@ -70,6 +71,10 @@ class TodosController < ApplicationController
 
   def set_project
     @project = Project.find(params[:project_id])
+  end
+
+  def authorize_project
+    forbidden unless current_user.can?(:visit, @project)
   end
 
 end
