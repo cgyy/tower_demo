@@ -1,0 +1,107 @@
+<h3>团队 <%= @team.name %> 的动态</h3>
+<div>
+  <%= form_for :team, url: team_events_path(@team), method: :get do |f| %>
+    <%= select_tag :user_id, options_for_select(@team.users.collect { |p| [ p.name, p.id ] }), include_blank: true %>
+    <%= f.submit "筛选动态" %>
+  <% end %>
+</div>
+<br />  
+
+<div class="event-list">
+  <% @events.group_by { |e| e.created_at.to_date }.each do |date, date_events| %>
+    <div class="event-date date-<%= date %>">
+      <h3><%= date %></h3>
+    
+      <% Event::group_sorted_by_project(date_events).each do |event_groups|  %>
+        <% event_groups.each do |project, events| %>
+          <div class="event-project proj-<%= project.id %>">
+            <h4><%= project.name %></h4>
+            <% events.each do |event| %>
+              <div>
+                <%= event.created_at.strftime("%H:%M") %>
+                <%= image_tag(event.user.avatar_url, size: "20x20") %>
+                <%= event.user.name %>
+                <%= event.message %>:
+                <%= event.source_url.html_safe %>
+              </div>
+            <% end %>        
+        <% end %>
+      </div>
+    <% end %>
+    </div>
+  <% end %>
+
+
+
+</div>
+
+<script type="text/javascript">
+  var updater = {
+      poll: function() {
+          $.getJSON('/pusher/poll', updater.onSuccess);
+      },
+
+      onSuccess: function(resp) {
+          var event = resp.event;
+          // 超时或其他错误5秒后重试
+          if (! event) {
+              window.setTimeout(updater.poll, 5);
+          } else {
+              updater.showMessage(event);
+              window.setTimeout(updater.poll, 0);
+          }
+      },
+
+      showMessage: function(event) {
+        console.log(event)
+        var html = ""
+        var dateParent
+        var projParent
+        var parent
+
+        var inHtml = "<div>"
+        inHtml += event.time + " "
+        inHtml += '<img src="' + event.user_avatar + '" width="20" height="20" /> '
+        inHtml += event.user_name + " "
+        inHtml += event.message + " "
+        inHtml += event.url
+        inHtml += '</div>'
+        
+        dateParent = $(".event-date.date-" + event.date).first()
+        if (dateParent.length > 0) {
+          projParent = dateParent.find(".event-project.proj-" + event.project_id).first()
+        }
+
+        if (projParent !=null && projParent.length > 0){
+          parent = projParent
+          html = inHtml
+        }else if (dateParent.length > 0) {
+          parent = dateParent
+          html += '<div class="event-project proj-' + event.project_id + '"> '
+          html += '<h4>' + event.project_name +  '</h4> '
+          html += inHtml
+          html += '</div>'
+        }else {
+          parent = $('.event-list')
+          html += '<div class="event-date date-' + event.date + '"> '
+          html += '<h3>' + event.date +  '</h3> '
+          html += '<div class="event-project proj-' + event.project_id + '"> '
+          html += '<h4>' + event.project_name +  '</h4> '
+          html += inHtml
+          html += '</div></div>'
+        }
+
+        console.log(11)
+        console.log(dateParent)
+        console.log(22)
+        console.log(projParent)
+
+        console.log(parent)
+        console.log(html)
+
+        parent.prepend(html)
+      }
+  }
+
+  updater.poll()
+</script>

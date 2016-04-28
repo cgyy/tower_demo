@@ -3,6 +3,7 @@
 require 'sinatra/async'
 
 class ThinPusher < Sinatra::Base
+  include ApplicationHelper
   register Sinatra::Async
 
   TIMEOUT = 60 * 5
@@ -12,7 +13,20 @@ class ThinPusher < Sinatra::Base
     content_type 'application/json'
 
     poll_cb = lambda do |event|
-      self.body({:status => 'success', :event => event }.to_json)
+      self.body({
+        status: 'success', 
+        event: {
+          id: event.id,
+          project_id: event.project_id,
+          project_name: event.project.name,
+          user_name: event.user.name,
+          user_avatar: event.user.avatar_url,
+          date: event.created_at.to_date,
+          time: event.created_at.strftime("%H:%M"),
+          message: event.message,
+          url: event.source_url
+        } 
+      }.to_json)
     end
 
     EventQueue.wait_call(&poll_cb)
