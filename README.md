@@ -19,13 +19,15 @@ rails s
 ### 测试方法
 
 打开2个标签页
+
 从 http://localhost:3000/projects/1/todos 进行任务的各项操作
 查看 http://localhost:3000/teams/1/events 的输出结果(不需刷新)
 
 events_controller#index 接口地址为 GET /teams/1/events.json
-参数如下: 页码 page, 每页个数 per_page, 起始ID since_id 用户ID user_id, 4个参数皆可空
+
+参数如下: 页码 page, 每页个数 per_page, 起始ID since_id, 用户ID user_id, 4个参数皆可空
 
 
 ### 其他
 
-因为没实现认证模块，目前是把当前用户固定设成ID为1的用户,测试权限的场合请在applicaton_controller修改
+因为没实现认证模块，目前是把当前用户固定设成ID为1的用户,测试权限的场合请在 applicaton_controller 修改
